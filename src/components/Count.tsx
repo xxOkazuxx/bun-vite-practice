@@ -9,6 +9,7 @@ const Count = () => {
     }
     return (
         <>
+            <h1>UseState練習</h1>
             <div>
                 <button onClick={() => setCountA(countA + 1)}>Click me to increment</button>
             </div>
