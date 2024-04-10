@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useLayoutEffect, useState } from 'react'
 
 const Timer = () => {
     const [isDisp, setIsDisp] = useState(true);
@@ -24,11 +24,20 @@ const Timer2 = () => {
         intervalId = window.setInterval(() => {
             console.log('interval called');
             setTime(prev => prev + 1);
+            window.localStorage.setItem('counter', time.toString());
         }, 1000);
         // コンポーネントが破棄されるときに呼ぶ
         return () => {
             window.clearInterval(intervalId);
         };
+    }, [])
+
+    // useLayoutEffectはuseEffectよりも先に実行される
+    useLayoutEffect(() => {
+        const _time = parseInt(window.localStorage.getItem('counter') as string);
+        if (!isNaN(_time)) {
+            setTime(_time);
+        }
     }, [])
 
     // useEffect(() => {
