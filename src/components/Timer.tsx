@@ -9,28 +9,32 @@ const Timer = () => {
                 {isDisp && <Timer2 />}
             </div>
             <button onClick={() => setIsDisp(prev => !prev)}>
-                トグル
+                {isDisp ? '非表示' : '表示'}
             </button >
         </>
     )
 }
+
 const Timer2 = () => {
     const [time, setTime] = useState(0);
+    const [isRunning, setIsRunning] = useState(false);
 
     // コンポーネントが生成されたときに一回だけ呼ぶ
     // -> useEffectの第二引数に空の配列を渡す
     useEffect(() => {
-        let intervalId = null;
-        intervalId = window.setInterval(() => {
-            console.log('interval called');
-            setTime(prev => prev + 1);
-            window.localStorage.setItem('counter', time.toString());
-        }, 1000);
+        let intervalId: number | null = null;
+        if (isRunning) {
+            intervalId = window.setInterval(() => {
+                console.log('interval called');
+                setTime(prev => prev + 1);
+                window.localStorage.setItem('counter', time.toString());
+            }, 1000);
+        }
         // コンポーネントが破棄されるときに呼ぶ
         return () => {
-            window.clearInterval(intervalId);
+            window.clearInterval(intervalId as number);
         };
-    }, [])
+    }, [isRunning])
 
     // useLayoutEffectはuseEffectよりも先に実行される
     useLayoutEffect(() => {
@@ -47,11 +51,25 @@ const Timer2 = () => {
     //     // setTime(prev => prev + 1);
     // }, [time])
 
+    const toggle = () => {
+        setIsRunning(prev => !prev);
+    }
+
+    const reset = () => {
+        setIsRunning(false);
+        setTime(0);
+    }
+
     return (
         <>
-            <time>{time}</time>
-            <span>秒経過</span>
-
+            <h3>
+                <time>{time}</time>
+                <span>秒経過</span>
+            </h3>
+            <div>
+                <button onClick={toggle}>{isRunning ? '一時停止' : 'スタート'}</button>
+                <button onClick={reset}>リセット</button>
+            </div>
         </>
     )
 }
